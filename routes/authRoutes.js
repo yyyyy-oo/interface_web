@@ -1,11 +1,12 @@
 const express = require('express');
-const { checkDuplicate, createAccount, checkUser } = require('../controllers/authController');
 const router = express.Router();
+const { checkUser,logoutUser } = require('../controllers/authController');
 
-router.get('/register', (req, res) => res.render('Register'));
-router.get('/register/checkduplicate', checkDuplicate);
-router.post('/register/createaccount', createAccount);
-router.get('/login', (req, res) => res.render('Login'));
+router.get('/login', (req, res) => {
+    if (req.session.user) res.render('LoginSuccess')
+    else res.render('Login')
+});
 router.post('/login/checkuser', checkUser);
+router.get('/logout', logoutUser);
 
 module.exports = router;

@@ -1,59 +1,68 @@
 const { getConnection } = require('../models/db');
 
-const checkDuplicate = async (req, res) => {
-  const inputid = req.query.id;
+// 공통 SQL 실행 함수
+const queryDB = async (sql, params) => {
   const connection = await getConnection();
+  if (!connection) throw new Error('SQL Connection Error');
   try {
-    if (!connection) throw new Error('SQL Connection Error');
-
-    let sql = 'SELECT id FROM userdata WHERE id = ?';
-    const [rows] = await connection.query(sql, [inputid]);
-
-    if (rows.length > 0 && rows[0].id === inputid) {
-      console.warn('Duplicate ID');
-      return res.status(409).json({ message: 'Duplicate ID' })
-    } else {
-      return res.status(200).json({ message: 'Not duplicate' });
-    }
-  } catch (error) {
-    console.error('Check Duplicate Failed:', error);
-    return res.status(500).json({ message: 'Check Duplicate Failed' });
+    const [dbResult] = await connection.query(sql, params);
+    return dbResult;
   } finally {
     if (connection) connection.release();
+  }
+};
+
+// 로그인
+const checkUser = async (req, res) => {
+  try {
+    const { inputid, inputpw } = req.body;
+    const dbResult = await queryDB('SELECT id, pw FROM userdata WHERE id = ?', [inputid]);
+
+    // 아이디가 없을 경우
+    if (dbResult.length === 0) {
+      console.warn('ID Does Not Exist:', inputid);
+      return res.status(404).json({ message: 'ID Does Not Exist' });
+    }
+
+    // 비밀번호가 일치하지 않을 경우
+    if (inputpw !== dbResult[0].pw) {
+      console.warn('Wrong Password:', inputid);
+      return res.status(401).json({ message: 'Wrong Password' });
+    }
+
+    // 로그인 성공 시
+    req.session.user = {
+      id: inputid,
+      loggedIn: true
+    };
+    console.log('Login Success:', inputid);
+    return res.status(200).json({ message: 'Login Success' });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Login Failed' });
+  }
+};
+
+// 로그아웃
+const logoutUser = async (req, res) => {
+  const loginid = req.session.user.id
+  if (req.session.user) {
+    req.session.destroy(err => {
+      if (err) {
+        console.error('Logout Failed:', loginid);
+        return res.status(500).json({ message: 'Logout Failed' });
+      }
+      else {
+        console.log('Logout Success:', loginid);
+        res.clearCookie('connect.sid');
+        return res.status(200).json({ message: 'Logout Success' });
+      }
+    });
+  } else {
+    console.warn('User Does Not Login');
+    res.status(400).json({ message: 'User Does Not Login' });
   }
 }
 
-const createAccount = async (req, res) => {
-  const { inputid, inputpw } = req.body;
-  const connection = await getConnection();
-
-  try {
-    if (!connection) throw new Error('SQL Connection Error');
-
-    let sql = 'SELECT id FROM userdata WHERE id = ?';
-    const [rows] = await connection.query(sql, [inputid]);
-
-    if (rows.length > 0 && rows[0].id === inputid) {
-      console.warn('Duplicate ID');
-      return res.status(409).json({ message: 'Duplicate ID' });
-    }
-
-    sql = 'INSERT INTO userdata (id, pw, regDate) VALUES (?, ?, NOW())';
-    await connection.query(sql, [inputid, inputpw]);
-
-    console.log('Register Success');
-    return res.status(200).json({ message: 'Register Success' });
-  } catch (error) {
-    console.error('Register Failed:', error);
-    return res.status(500).json({ message: 'Register Failed' });
-  } finally {
-    if (connection) connection.release();
-  }
-};
-
-
-const checkUser = (req, res) => {
-  // Implement login logic here
-};
-
-module.exports = { checkDuplicate, createAccount, checkUser };
+module.exports = { checkUser, logoutUser };

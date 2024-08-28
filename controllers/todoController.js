@@ -13,7 +13,7 @@ const saveTodoList = async (req, res) => {
 
     if (receivedData.length === 0) throw new Error('No Data');
     console.log('Data Saved:', randomcode);
-    return res.status(200).json({ code: randomcode });
+    return res.status(201).json({ code: randomcode });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

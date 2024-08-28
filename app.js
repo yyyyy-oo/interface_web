@@ -1,26 +1,24 @@
 const express = require('express');
 const cors = require('cors');
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
-
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 dotenv.config();
 
 const app = express();
+app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
 
 
 
 // 사용자 설정
 const port = 3000;
 const COOKIE_SECRET = "password1234";
-
 
 // 사용자 설정 but 건들x
 const swaggerFile = require('./swagger/swagger-output.json');
@@ -37,19 +35,18 @@ app.use(session({
 }));
 
 
-
-// 라우팅 설정
-const todoRoutes = require('./routes/todoRoutes');
-const authRoutes = require('./routes/authRoutes');
-
-app.get('/', (req, res) => {
-  res.render('Main');
-});
-app.use('/', todoRoutes);
-app.use('/', authRoutes);
-
+// Swagger 설정
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-app.listen(port, () => {
-  console.log(`Port Open: ${port}`);
-});
+// 라우트 설정
+const todoRoutes = require('./routes/todoRoutes');
+app.use('/', todoRoutes);
+const accRoutes = require('./routes/accRoutes');
+app.use('/', accRoutes);
+const authRoutes = require('./routes/authRoutes');
+app.use('/', authRoutes);
+
+
+app.get('/', (req, res) => { res.render('Main') });
+
+app.listen(port, () => { console.log(`Port Open: ${port}`) });

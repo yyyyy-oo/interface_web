@@ -1,9 +1,9 @@
 const express = require('express');
-const { saveTodoList, loadTodoList } = require('../controllers/todoController');
 const router = express.Router();
+const { saveTodoList, loadTodoList } = require('../controllers/todoController');
 
 router.get('/todolist', (req, res) => res.render('TodoList'));
-router.post('/savetodolist', saveTodoList);
-router.get('/loadtodolist/:code', loadTodoList);
+router.post('/todolist/save', saveTodoList);
+router.get('/todolist/load/:code', loadTodoList);
 
 module.exports = router;

@@ -2,7 +2,7 @@
     <!-- 여기서부터 -->
 
     <h2>로그인</h2>
-    <form id="loginForm" onsubmit="return register()">
+    <form id="loginForm" onsubmit="login(event)">
         <ul>
             <li>아이디 : <input name="userid" type="text" placeholder="ID" required></li>
             <li>비밀번호 : <input name="userpw" type="password" placeholder="PASSWORD" required></li>
@@ -11,29 +11,31 @@
     </form>
 
     <script>
-        function register() {
+        function login(event) {
             event.preventDefault();
             const formData = new FormData(document.getElementById('loginForm'));
-            const idpw = {
-                inputid: formData.get('userid'),
-                inputpw: formData.get('userpw')
-            };
+            const userid = formData.get('userid').trim();
+            const userpw = formData.get('userpw').trim();
+            const idpw = { inputid: userid, inputpw: userpw };
 
-            fetch("http://localhost:3000/checkUser", {
+            fetch("http://localhost:3000/login/checkuser", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(idpw),
+                body: JSON.stringify(idpw)
             })
-                .then((response) => {
-                    if (response.ok) { return response.json() }
-                    else if (data.status === 401) { throw new Error("비밀번호가 일치하지 않습니다.") }
-                    else { throw new Error("로그인 중 문제가 발생했습니다. 다시 시도해주세요.") };
+                .then(response => {
+                    if (response.ok) { return response.json(); }
+                    else if (response.status === 401) { throw new Error("비밀번호가 일치하지 않습니다."); }
+                    else if (response.status === 404) { throw new Error("등록된 아이디가 없습니다."); }
+                    else { throw new Error("로그인 중 문제가 발생했습니다. 다시 시도해주세요."); }
                 })
-                .then((data) => { alert("로그인 성공!") })
-                .catch(error => { alert(error.message) });
+                .then(data => {
+                    alert("로그인 성공!");
+                    window.location.reload();
+                })
+                .catch(error => { alert(error.message); });
         }
     </script>
-
 
     <!-- 여기까지 -->
     <%-include('footer.ejs')%>

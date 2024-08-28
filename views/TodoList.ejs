@@ -43,7 +43,7 @@
 
             if (todos.length === 0) { return alert('저장할 항목이 없습니다.') };
 
-            fetch('http://localhost:3000/savetodolist', {
+            fetch('http://localhost:3000/todolist/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(todos)
@@ -62,7 +62,7 @@
             if (!code) { return alert('코드를 입력하세요.')}
             else if (code.length !== 6) { return alert('코드가 올바르지 않습니다.') };
 
-            fetch(`http://localhost:3000/loadtodolist/${code}`)
+            fetch(`http://localhost:3000/todolist/load/${code}`)
                 .then(response => {
                     if (response.ok) { return response.json(); }
                     else if (response.status === 404) { throw new Error('일치하는 코드를 찾을 수 없습니다.'); }
