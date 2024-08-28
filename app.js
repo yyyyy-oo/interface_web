@@ -5,15 +5,15 @@ const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-dotenv.config();
+const localtunnel = require('localtunnel');
 
+dotenv.config();
 const app = express();
 app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
-
 
 
 // 사용자 설정
@@ -48,4 +48,10 @@ app.use('/', authRoutes);
 
 app.get('/', (req, res) => { res.render('Main') });
 
-app.listen(port, () => { console.log(`Port Open: ${port}`) });
+app.listen(port, async () => {
+  console.log('Port Open:', port);
+
+  // 임시 URL
+  const tunnel = await localtunnel({ port: port, subdomain: 'iftest' });
+  console.log('LocalTunnel running:', tunnel.url);
+});
