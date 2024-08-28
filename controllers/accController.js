@@ -39,7 +39,7 @@ const createAccount = async (req, res) => {
     }
 
     await queryDB('INSERT INTO userdata (id, pw, regDate) VALUES (?, ?, NOW())', [inputid, inputpw]);
-    console.log('Register Success');
+    console.log('Register Success:', inputid);
     return res.status(201).json({ message: 'Register Success' });
   } catch (error) {
     console.error(error);

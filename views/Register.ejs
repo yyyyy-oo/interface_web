@@ -70,11 +70,9 @@
                     else if (response.status === 409) { throw new Error("중복된 아이디입니다. 다시 시도해주세요."); }
                     else { throw new Error("가입 중 문제가 발생했습니다. 다시 시도해주세요."); }
                 })
-                .then(data => { 
-                    if(data.status === 200){
-                        alert("가입 성공!");
-                        window.location.href = '/login';
-                    }
+                .then(data => {
+                    alert("가입 성공!");
+                    location.assign('/login');
                 })
                 .catch(error => { alert(error.message); });
 
