@@ -1,0 +1,39 @@
+<%-include('header.ejs')%>
+    <!-- 여기서부터 -->
+
+    <h2>로그인</h2>
+    <form id="loginForm" onsubmit="return register()">
+        <ul>
+            <li>아이디 : <input name="userid" type="text" placeholder="ID" required></li>
+            <li>비밀번호 : <input name="userpw" type="password" placeholder="PASSWORD" required></li>
+        </ul>
+        <button type="submit">로그인</button>
+    </form>
+
+    <script>
+        function register() {
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('loginForm'));
+            const idpw = {
+                inputid: formData.get('userid'),
+                inputpw: formData.get('userpw')
+            };
+
+            fetch("http://localhost:3000/checkUser", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(idpw),
+            })
+                .then((response) => {
+                    if (response.ok) { return response.json() }
+                    else if (data.status === 401) { throw new Error("비밀번호가 일치하지 않습니다.") }
+                    else { throw new Error("로그인 중 문제가 발생했습니다. 다시 시도해주세요.") };
+                })
+                .then((data) => { alert("로그인 성공!") })
+                .catch(error => { alert(error.message) });
+        }
+    </script>
+
+
+    <!-- 여기까지 -->
+    <%-include('footer.ejs')%>

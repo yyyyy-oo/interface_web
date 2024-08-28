@@ -1,0 +1,84 @@
+<%- include('header.ejs') %>
+    <!-- 여기서부터 -->
+
+    <h2>회원가입</h2>
+    <form id="signupForm" onsubmit="return register(event)">
+        <ul>
+            <li>
+                아이디 : <input name="userid" id="userid" type="text" placeholder="ID" required oninput="handleIdChange()">
+                <button id="checkButton" type="button" onclick="checkDuplicate()">중복 확인</button>
+            </li>
+            <li>비밀번호 : <input name="userpw" type="password" placeholder="PASSWORD" required></li>
+            <li>비밀번호 확인 : <input name="userpwconfirm" type="password" placeholder="PASSWORD CONFIRM" required></li>
+        </ul>
+        <button id="signupButton" type="submit" disabled>가입</button>
+    </form>
+
+    <script>
+        let isIdValid = false;
+        const checkButton = document.getElementById('checkButton');
+        const signupButton = document.getElementById('signupButton');
+
+        function handleIdChange() {
+            isIdValid = false;
+            checkButton.textContent = '중복 확인';
+            checkButton.disabled = false;
+            signupButton.disabled = true;
+        }
+
+        function checkDuplicate() {
+            const idcheck = document.getElementById('userid').value;
+            if (!idcheck) { return alert('아이디를 입력해주세요.') };
+
+            fetch(`http://localhost:3000/register/checkduplicate?id=${encodeURIComponent(idcheck)}`)
+                .then(response => {
+                    if (response.ok) { return response.json(); }
+                    else if (response.status === 409) { throw new Error("중복된 아이디입니다. 다시 시도해주세요."); }
+                    else { throw new Error("확인 중 문제가 발생했습니다. 다시 시도해주세요."); }
+                })
+                .then(data => {
+                    alert('사용 가능한 아이디 입니다.')
+                    isIdValid = true;
+                    checkButton.textContent = '확인됨';
+                    checkButton.disabled = true;
+                    signupButton.disabled = false;
+                })
+                .catch(error => { alert(error.message); });
+        }
+
+        function register(event) {
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('signupForm'));
+            const userid = formData.get('userid').trim();
+            const userpw = formData.get('userpw').trim();
+            const userpwconfirm = formData.get('userpwconfirm').trim();
+
+            if (userpw !== userpwconfirm) {
+                alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+                return false;
+            }
+
+            const idpw = {
+                inputid: userid,
+                inputpw: userpw
+            };
+
+            fetch("http://localhost:3000/register/createaccount", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(idpw)
+            })
+                .then(response => {
+                    if (response.ok) { return response.json(); }
+                    else if (response.status === 409) { throw new Error("중복된 아이디입니다. 다시 시도해주세요."); }
+                    else { throw new Error("가입 중 문제가 발생했습니다. 다시 시도해주세요."); }
+                })
+                .then(data => { alert("가입 성공!"); })
+                .catch(error => { alert(error.message); });
+
+            return false;
+        }
+    </script>
+
+    <!-- 여기까지 -->
+    <%- include('footer.ejs') %>
