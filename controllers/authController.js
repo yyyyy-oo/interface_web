@@ -1,4 +1,4 @@
-const { getConnection } = require('../models/db');
+const { getConnection } = require('../models/connectMysql');
 
 // 공통 SQL 실행 함수
 const queryDB = async (sql, params) => {
@@ -31,10 +31,7 @@ const checkUser = async (req, res) => {
     }
 
     // 로그인 성공 시
-    req.session.user = {
-      id: inputid,
-      loggedIn: true
-    };
+    req.session.user = { id: inputid, loggedIn: true };
     console.log('Login Success:', inputid);
     return res.status(200).json({ message: 'Login Success' });
 
@@ -46,16 +43,15 @@ const checkUser = async (req, res) => {
 
 // 로그아웃
 const logoutUser = async (req, res) => {
-  const loginid = req.session.user.id
   if (req.session.user) {
     req.session.destroy(err => {
       if (err) {
-        console.error('Logout Failed:', loginid);
+        console.error('Logout Failed');
         return res.status(500).json({ message: 'Logout Failed' });
       }
       else {
-        console.log('Logout Success:', loginid);
         res.clearCookie('connect.sid');
+        console.log('Logout Success');
         return res.status(200).json({ message: 'Logout Success' });
       }
     });

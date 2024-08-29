@@ -11,6 +11,8 @@
     </form>
 
     <script>
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
+
         function login(event) {
             event.preventDefault();
             const formData = new FormData(document.getElementById('loginForm'));
@@ -18,7 +20,7 @@
             const userpw = formData.get('userpw').trim();
             const idpw = { inputid: userid, inputpw: userpw };
 
-            fetch("http://localhost:3000/login/checkuser", {
+            fetch(`${baseUrl}/login/checkuser`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(idpw)

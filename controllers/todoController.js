@@ -1,5 +1,5 @@
-const { createRandomString } = require('../functions/randomcode');
-const { getConnection } = require('../models/db');
+const { createRandomString } = require('../models/generateCode');
+const { getConnection } = require('../models/connectMysql');
 
 const saveTodoList = async (req, res) => {
   const receivedData = JSON.stringify(req.body);

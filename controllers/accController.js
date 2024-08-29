@@ -1,4 +1,4 @@
-const { getConnection } = require('../models/db');
+const { getConnection } = require('../models/connectMysql');
 
 // 공통 SQL 실행 함수
 const queryDB = async (sql, params) => {

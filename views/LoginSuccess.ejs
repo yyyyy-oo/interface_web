@@ -5,8 +5,10 @@
     <button id="logoutButton" type="button" onclick="logout()">로그아웃</button>
 
     <script>
+        const baseUrl = `${window.location.protocol}//${window.location.host}`;
+        
         function logout() {
-            fetch("http://localhost:3000/logout")
+            fetch(`${baseUrl}/logout`)
                 .then(response => {
                     if (response.ok) { return response.json(); }
                     else if (response.status === 400) { throw new Error("사용자가 로그인되어있지 않습니다."); }
