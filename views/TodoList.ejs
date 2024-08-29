@@ -70,9 +70,10 @@
                     else { throw new Error('불러오기 중 문제가 발생했습니다. 다시 시도해주세요.'); }
                 })
                 .then(data => {
+                    const receivedTodos = data.todos
                     const ul = document.getElementById('todoList');
                     ul.innerHTML = '';
-                    data.forEach(todo => {
+                    receivedTodos.forEach(todo => {
                         const li = document.createElement('li');
                         const textNode = document.createTextNode(todo);
                         li.appendChild(textNode);

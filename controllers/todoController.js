@@ -36,7 +36,7 @@ const loadTodoList = async (req, res) => {
       return res.status(404).send('Code Not Found');
     } else {
       console.log('Data loaded:', receivedCode);
-      return res.status(200).json(rows[0].todos);
+      return res.status(200).json({'todos' : rows[0].todos});
     }
   } catch (error) {
     console.error(error);
