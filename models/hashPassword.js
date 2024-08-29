@@ -1,40 +1,26 @@
 const crypto = require('crypto');
 
-async function hashPassword(plainPassword) {
+const iterations = 30513;
+const keyLength = 64;
+
+function hashPassword(plainPassword) {
+    if (typeof plainPassword !== 'string') { throw new TypeError('Password must be a string') };
+
     const salt = crypto.randomBytes(16).toString('hex');
-    const iterations = 37518;
-    const keyLength = 64;
+    const derivedKey = crypto.pbkdf2Sync(plainPassword, salt, iterations, keyLength, 'sha512');
+    const hashedPassword = derivedKey.toString('hex');
 
-    try {
-        const hashedPassword = await new Promise((resolve, reject) => {
-            crypto.pbkdf2(plainPassword, salt, iterations, keyLength, 'sha512', (err, derivedKey) => {
-                if (err) reject(err);
-                resolve(derivedKey.toString('hex'));
-            });
-        });
-
-        return { salt, hashedPassword };
-    } catch (error) {
-        throw new Error('Error hashing password');
-    }
+    return { salt, hashedPassword };
 }
 
-async function verifyHash(salt, plainPassword) {
-    const iterations = 37518;
-    const keyLength = 64;
+function verifyHash(salt, plainPassword) {
+    if (typeof plainPassword !== 'string') { throw new TypeError('Password must be a string') };
+    if (typeof salt !== 'string') { throw new TypeError('Salt must be a string') }
 
-    try {
-        const hashedPassword = await new Promise((resolve, reject) => {
-            crypto.pbkdf2(plainPassword, salt, iterations, keyLength, 'sha512', (err, derivedKey) => {
-                if (err) reject(err);
-                resolve(derivedKey.toString('hex'));
-            });
-        });
+    const derivedKey = crypto.pbkdf2Sync(plainPassword, salt, iterations, keyLength, 'sha512');
+    const hashedPassword = derivedKey.toString('hex');
 
-        return hashedPassword;
-    } catch (error) {
-        throw new Error('Error verifying hash');
-    }
+    return hashedPassword;
 }
 
 module.exports = { hashPassword, verifyHash };

@@ -1,4 +1,5 @@
 const { getConnection } = require('../models/connectMysql');
+const { verifyHash } = require('../models/hashPassword');
 
 // 공통 SQL 실행 함수
 const queryDB = async (sql, params) => {
@@ -16,7 +17,7 @@ const queryDB = async (sql, params) => {
 const checkUser = async (req, res) => {
   try {
     const { inputid, inputpw } = req.body;
-    const dbResult = await queryDB('SELECT id, pw FROM userdata WHERE id = ?', [inputid]);
+    const dbResult = await queryDB('SELECT id, pw, salt FROM userdata WHERE id = ?', [inputid]);
 
     // 아이디가 없을 경우
     if (dbResult.length === 0) {
@@ -25,7 +26,8 @@ const checkUser = async (req, res) => {
     }
 
     // 비밀번호가 일치하지 않을 경우
-    if (inputpw !== dbResult[0].pw) {
+    const rehashedPassword = verifyHash(dbResult[0].salt, inputpw);
+    if (rehashedPassword !== dbResult[0].pw) {
       console.warn('Wrong Password:', inputid);
       return res.status(401).json({ message: 'Wrong Password' });
     }

@@ -17,8 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // 사용자 설정
 const port = 3000;
-const cookie_secret = "interface11";
-const ngrok_token = '2lJhyiTpOzkXMTIhl23loxvA2GK_2vuERvshiMaTC3hoTasW2';
+const cookie_secret = "interface518";
 
 //세션 설정
 app.use(cookieParser(cookie_secret));
@@ -44,14 +43,11 @@ app.use('/', accRoutes);
 const authRoutes = require('./routes/authRoutes');
 app.use('/', authRoutes);
 
-app.get('/', (req, res) => { res.render('Main') });
 
+app.get('/', (req, res) => { res.render('Main') });
+app.use((req, res) => { res.status(404).render('NotFound') });
 app.listen(port, async () => {
-  console.log('Port Open:', port);
-  const url = await ngrok.connect({ addr: port, authtoken: ngrok_token });
-  app.use(cors({
-    origin: url,
-    credentials: true
-  }));
-  console.log('ngrok tunnel opened at:', url);
+  const url = await ngrok.connect({ addr: port, authtoken: process.env.NGROK_TOKEN });
+  app.use(cors({ origin: url, credentials: true }));
+  console.log('ngrok tunnel opened:', url);
 });

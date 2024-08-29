@@ -1,4 +1,5 @@
 const { getConnection } = require('../models/connectMysql');
+const { hashPassword } = require('../models/hashPassword');
 
 // 공통 SQL 실행 함수
 const queryDB = async (sql, params) => {
@@ -38,7 +39,8 @@ const createAccount = async (req, res) => {
       return res.status(409).json({ message: 'Duplicate ID' });
     }
 
-    await queryDB('INSERT INTO userdata (id, pw, regDate) VALUES (?, ?, NOW())', [inputid, inputpw]);
+    const { salt, hashedPassword } = hashPassword(inputpw);
+    await queryDB('INSERT INTO userdata (id, pw, salt, regDate) VALUES (?, ?, ?, NOW())', [inputid, hashedPassword, salt]);
     console.log('Register Success:', inputid);
     return res.status(201).json({ message: 'Register Success' });
   } catch (error) {
