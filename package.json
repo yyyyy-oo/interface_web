@@ -18,7 +18,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "mysql2": "^3.11.0",
-    "ngrok": "^5.0.0-beta.2",
+    "socket.io": "^4.7.5",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
   }

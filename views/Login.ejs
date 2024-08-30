@@ -11,7 +11,7 @@
     </form>
 
     <script>
-        const baseUrl = `${window.location.protocol}//${window.location.host}`;
+        const baseUrl = window.location.origin;
 
         function login(event) {
             event.preventDefault();

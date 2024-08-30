@@ -5,8 +5,8 @@
     <button id="logoutButton" type="button" onclick="logout()">로그아웃</button>
 
     <script>
-        const baseUrl = `${window.location.protocol}//${window.location.host}`;
-        
+        const baseUrl = window.location.origin;
+
         function logout() {
             fetch(`${baseUrl}/logout`)
                 .then(response => {

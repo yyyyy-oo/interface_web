@@ -1,5 +1,5 @@
-const { getConnection } = require('../models/connectMysql');
-const { verifyHash } = require('../models/hashPassword');
+const { getConnection } = require('../modules/connectMysql');
+const { verifyHash } = require('../modules/hashPassword');
 
 // 공통 SQL 실행 함수
 const queryDB = async (sql, params) => {
