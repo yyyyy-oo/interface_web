@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
@@ -11,13 +12,14 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-const getConnection = async () => {
+const mySQL = async (sql, params) => {
   try {
-    return await pool.getConnection();
+    const [result] = await pool.execute(sql, params);
+    return result;
   } catch (error) {
-    console.error('MySQL Connection Error:', error.message);
-    return null;
+    console.error('MySQL Query Error:', error.message);
+    throw error;
   }
 };
 
-module.exports = { getConnection };
+module.exports = { mySQL };

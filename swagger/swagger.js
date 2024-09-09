@@ -1,4 +1,6 @@
-const swaggerAutogen = require('swagger-autogen')({ language: 'en' });
+const fs = require('fs');
+const path = require('path');
+const swaggerAutogen = require('swagger-autogen')({ language: 'ko' });
 
 const doc = {
   info: {
@@ -10,6 +12,10 @@ const doc = {
 };
 
 const outputFile = "./swagger-output.json";
-const endpointsFiles = [ "../app.js" ];
+
+const routesPath = path.resolve(__dirname, '../routes');
+const endpointsFiles = fs.readdirSync(routesPath).map(file => `../routes/${file}`);
+
+endpointsFiles.push('../app.js');
 
 swaggerAutogen(outputFile, endpointsFiles, doc);

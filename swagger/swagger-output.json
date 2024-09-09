@@ -11,63 +11,6 @@
     "http"
   ],
   "paths": {
-    "/": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/todolist": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/todolist/save": {
-      "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/todolist/load/{code}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/register": {
       "get": {
         "description": "",
@@ -90,13 +33,13 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "성공"
           },
           "409": {
-            "description": "Conflict"
+            "description": "충돌"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "내부 서버 오류"
           }
         }
       }
@@ -123,13 +66,13 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "작성됨"
           },
           "409": {
-            "description": "Conflict"
+            "description": "충돌"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "내부 서버 오류"
           }
         }
       }
@@ -166,16 +109,16 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "성공"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "권한 없음"
           },
           "404": {
-            "description": "Not Found"
+            "description": "찾을 수 없음"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "내부 서버 오류"
           }
         }
       }
@@ -185,13 +128,80 @@
         "description": "",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "성공"
           },
           "400": {
-            "description": "Bad Request"
+            "description": "잘못된 요청"
           },
           "500": {
-            "description": "Internal Server Error"
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/chat": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/todolist": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/todolist/save": {
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "작성됨"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/todolist/load/{code}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공"
+          },
+          "404": {
+            "description": "찾을 수 없음"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
           }
         }
       }

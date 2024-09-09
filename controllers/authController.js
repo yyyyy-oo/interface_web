@@ -1,23 +1,11 @@
-const { getConnection } = require('../modules/connectMysql');
+const { mySQL } = require('../modules/connectMysql');
 const { verifyHash } = require('../modules/hashPassword');
-
-// 공통 SQL 실행 함수
-const queryDB = async (sql, params) => {
-  const connection = await getConnection();
-  if (!connection) throw new Error('SQL Connection Error');
-  try {
-    const [dbResult] = await connection.query(sql, params);
-    return dbResult;
-  } finally {
-    if (connection) connection.release();
-  }
-};
 
 // 로그인
 const checkUser = async (req, res) => {
   try {
     const { inputid, inputpw } = req.body;
-    const dbResult = await queryDB('SELECT id, pw, salt FROM userdata WHERE id = ?', [inputid]);
+    const dbResult = await mySQL('SELECT id, pw, salt FROM userdata WHERE id = ?', [inputid]);
 
     // 아이디가 없을 경우
     if (dbResult.length === 0) {

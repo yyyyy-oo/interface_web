@@ -1,37 +1,11 @@
 <%-include('header.ejs')%>
     <!-- 여기서부터 -->
 
-    <h1>Socket.io Chat</h1>
-    <input id="messageInput" type="text" placeholder="Type a message..." />
-    <button id="sendButton">Send</button>
-    <ul id="messages"></ul>
-
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
-        const socket = io();
-
-        // 메시지 수신 처리
-        socket.on('message', (msg) => {
-            const li = document.createElement('li');
-            li.textContent = msg;
-            document.getElementById('messages').appendChild(li);
-        });
-
-        // 버튼 클릭 시 메시지 전송
-        document.getElementById('sendButton').addEventListener('click', () => {
-            const input = document.getElementById('messageInput');
-            const message = input.value;
-            socket.emit('message', message);
-            input.value = '';
-        });
-    </script>
-    <!-- <select id="chatroom">
+    <select id="chatroom">
         <option value="test_1">채팅방1</option>
         <option value="test_2">채팅방2</option>
         <option value="test_3">채팅방3</option>
     </select>
-    <br>
-    <input id="userid" type="text" placeholder="아이디">
     <br>
     <input id="message" type="text" placeholder="내용">
     <button onClick="sendMessage()">전송</button>
@@ -42,7 +16,6 @@
         console.log(window.location)
         const baseUrl = window.location.origin;
         const selectedRoom = document.getElementById('chatroom');
-        const inputID = document.getElementById('userid');
         const inputMessage = document.getElementById('message');
         const chatLog = document.getElementById("chatlog");
         let lastUserId = null;
@@ -66,9 +39,8 @@
 
         // 메세지 전송
         function sendMessage() {
-            const userid = inputID.value.trim();
             const message = inputMessage.value.trim();
-            const jsonMessage = { "id": userid, "message": message };
+            const jsonMessage = { "message": message };
             socket.emit('message', JSON.stringify(jsonMessage));
             inputMessage.value = '';
         }
@@ -76,43 +48,23 @@
         // 메세지 수신
         socket.on('message', (data) => {
             try {
-                const receivedData = JSON.parse(data); // event.data 대신 data 사용
+                const receivedData = JSON.parse(data);
                 receiveMessage(receivedData);
             } catch (error) {
-                console.error("Wrong Format"); // 'Worng Format' 오타 수정
+                console.error("Wrong Format");
             }
         });
 
         // 기타 기능
         function receiveMessage(data) {
-            updateChatLog(chatLog, data);
-            lastUserId = data.id;
+            var newMessage = document.createElement('div');
+            newMessage.textContent = `[${data.id}] ${data.message}`;
+            chatLog.appendChild(newMessage);
+
+            // input 필드를 비웁니다
+            document.getElementById('userInput').value = '';
         }
-
-        function updateChatLog(chatLog, data) {
-            let fieldset;
-
-            if (lastUserId === data.id) {
-                fieldset = document.getElementById(`fieldset-${data.id}`);
-            } else {
-                fieldset = document.createElement("fieldset");
-                fieldset.id = `fieldset-${data.id}`;
-
-                const legend = document.createElement("legend");
-                legend.textContent = `${data.id}`;
-                fieldset.appendChild(legend);
-
-                chatLog.appendChild(fieldset);
-            }
-
-            const chat = document.createElement("div");
-            const messageText = `${data.message}`;
-            const message = document.createTextNode(messageText);
-
-            chat.appendChild(message);
-            fieldset.appendChild(chat);
-        }
-    </script> -->
+    </script>
 
     <!-- 여기까지 -->
     <%-include('footer.ejs')%>
