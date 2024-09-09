@@ -1,9 +1,9 @@
-const { createRandomString } = require('../modules/generateCode');
+const { generateCode } = require('../modules/randomString');
 const { mySQL } = require('../modules/connectMysql');
 
 const saveTodoList = async (req, res) => {
   const receivedData = JSON.stringify(req.body);
-  const randomcode = createRandomString(6);
+  const randomcode = generateCode(6);
 
   try {
     if (Object.keys(req.body).length === 0) throw new Error('No Data');

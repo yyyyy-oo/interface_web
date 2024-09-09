@@ -1,5 +1,6 @@
 const { mySQL } = require('../modules/connectMysql');
 const { verifyHash } = require('../modules/hashPassword');
+const { generateAccessToken } = require('../modules/tokenControl');
 
 // 로그인
 const checkUser = async (req, res) => {
@@ -21,10 +22,9 @@ const checkUser = async (req, res) => {
     }
 
     // 로그인 성공 시
-    req.session.user = { id: inputid, loggedIn: true };
-    console.log('Login Success:', inputid);
+    const accessToken = generateAccessToken(inputid);
+    res.cookie('token', accessToken, { httpOnly: true, secure: true });
     return res.status(200).json({ message: 'Login Success' });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Login Failed' });
@@ -33,22 +33,8 @@ const checkUser = async (req, res) => {
 
 // 로그아웃
 const logoutUser = async (req, res) => {
-  if (req.session.user) {
-    req.session.destroy(err => {
-      if (err) {
-        console.error('Logout Failed');
-        return res.status(500).json({ message: 'Logout Failed' });
-      }
-      else {
-        res.clearCookie('connect.sid');
-        console.log('Logout Success');
-        return res.status(200).json({ message: 'Logout Success' });
-      }
-    });
-  } else {
-    console.warn('User Does Not Login');
-    res.status(400).json({ message: 'User Does Not Login' });
-  }
+  res.cookie('token', '', { maxAge: 0 });
+  return res.status(200).json({ message: 'Logout Success' });
 }
 
 module.exports = { checkUser, logoutUser };

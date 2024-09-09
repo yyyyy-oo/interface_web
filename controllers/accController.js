@@ -1,7 +1,6 @@
 const { mySQL } = require('../modules/connectMysql');
 const { hashPassword } = require('../modules/hashPassword');
 
-
 // 중복 아이디 체크
 const checkDuplicate = async (req, res) => {
   try {
