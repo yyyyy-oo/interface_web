@@ -5,7 +5,7 @@ const saveTodoList = async (req, res) => {
   try {
     const receivedData = JSON.stringify(req.body);
     const randomcode = generateCode(6);
-    await mySQL('INSERT INTO todolist (code, todos, saveDate) VALUES (?, ?, NOW())', [randomcode, receivedData]);
+    await mySQL('INSERT INTO todolist (code, todos, saveDate) VALUES (?, ?, now())', [randomcode, receivedData]);
 
     console.log('Data Saved:', randomcode);
     return res.status(201).json({ code: randomcode });

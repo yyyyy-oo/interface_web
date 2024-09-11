@@ -23,7 +23,7 @@ const createAccount = async (req, res) => {
     const { inputid, inputpw } = req.body;
     const { salt, hashedPassword } = hashPassword(inputpw);
 
-    await mySQL('INSERT INTO userdata (id, pw, salt, regDate) VALUES (?, ?, ?, NOW())', [inputid, hashedPassword, salt]);
+    await mySQL('INSERT INTO userdata (id, pw, salt, regDate) VALUES (?, ?, ?, now())', [inputid, hashedPassword, salt]);
     console.log('Register Success:', inputid);
     return res.status(201).json({ message: 'Register Success' });
   } catch (error) {

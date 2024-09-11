@@ -10,15 +10,20 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 const server = http.createServer(app);
-app.use(cookieParser());
 
+// 미들웨어 설정
+app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
+
+// 뷰어 설정
 app.set('view engine', 'ejs');
 app.set('views', './views');
-app.use(cors());
+
 
 // 사용자 설정
 const port = process.env.PORT;
+const domian = process.env.NGROK_DOMAIN;
 
 // Socket IO 설정
 const { setupSocketIo } = require('./controllers/chatController');
@@ -41,9 +46,9 @@ app.use((req, res, next) => { res.status(404).render('NotFound') });
 server.listen(port, () => { console.log('Port Open:', port) });
 
 // ngrok 설정
-const ngrokCommand = 'ngrok http --domain=driving-steadily-leopard.ngrok-free.app ' + port;
+const ngrokCommand = `ngrok http --domain=${domian} ${port}`;
 exec(ngrokCommand, (error, stdout, stderr) => {
-  if (error) { return console.error(`Error executing ngrok: ${error}`) };
-  if (stderr) { return console.error(`ngrok stderr: ${stderr}`) };
-  console.log('Ngrok Connected');
+  if (error) { return console.error('[Ngrok]', error) };
+  if (stderr) { return console.error('[Ngrok Stderr]', stderr) };
+  if (stdout) { console.log('Ngrok Connected') };
 });
