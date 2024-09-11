@@ -1,42 +1,35 @@
+const { mySQL } = require('../modules/connectDB');
 const { generateCode } = require('../modules/randomString');
-const { mySQL } = require('../modules/connectMysql');
 
 const saveTodoList = async (req, res) => {
-  const receivedData = JSON.stringify(req.body);
-  const randomcode = generateCode(6);
-
   try {
-    if (Object.keys(req.body).length === 0) throw new Error('No Data');
-    const sql = 'INSERT INTO todolist (code, todos, saveDate) VALUES (?, ?, NOW())';
-    await mySQL(sql, [randomcode, receivedData]);
+    const receivedData = JSON.stringify(req.body);
+    const randomcode = generateCode(6);
+    await mySQL('INSERT INTO todolist (code, todos, saveDate) VALUES (?, ?, NOW())', [randomcode, receivedData]);
 
     console.log('Data Saved:', randomcode);
     return res.status(201).json({ code: randomcode });
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    console.error('[saveTodoList]', error);
+    res.sendStatus(500).json({ message: 'saveTodoList Failed' });
   }
 };
 
 const loadTodoList = async (req, res) => {
-  const receivedCode = req.params.code;
-
   try {
-    const sql = 'SELECT todos FROM todolist WHERE code = ?';
-    const [rows] = await mySQL(sql, [receivedCode]);
-
-    if (rows.length === 0) {
-      console.warn('Code Not Found');
-      return res.status(404).send('Code Not Found');
-    } else {
+    const receivedCode = req.params.code;
+    const [dbResult] = await mySQL('SELECT todos FROM todolist WHERE code = ?', [receivedCode]);
+    if (dbResult) {
       console.log('Data loaded:', receivedCode);
-      return res.status(200).json(rows);
+      return res.status(200).json(dbResult);
     }
+
+    console.warn('Code Not Found:', receivedCode);
+    return res.status(404).json({ message: 'Code Not Found' });
   } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
+    console.error('[loadTodoList]', error);
+    res.sendStatus(500).json({ message: 'loadTodoList Failed' });
   }
 };
-
 
 module.exports = { saveTodoList, loadTodoList };

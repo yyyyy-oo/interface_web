@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
 const path = require('path');
@@ -17,15 +16,12 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-
 
 // 사용자 설정
 const port = process.env.PORT;
 
 // Socket IO 설정
 const { setupSocketIo } = require('./controllers/chatController');
-// const io = setupSocketIo(server)
 setupSocketIo(server);
 
 // Swagger 설정
@@ -34,7 +30,7 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // 라우트 설정
 fs.readdirSync(path.join(__dirname, 'routes'))
-  .filter(file => file.endsWith('.js'))
+  .filter(file => file.endsWith('.js') && file !== 'auth.js')
   .forEach(file => app.use('/', require(`./routes/${file}`)));
 
 // 경로 설정

@@ -1,12 +1,12 @@
 const { checkDuplicate, createAccount } = require('../controllers/accController');
-const { auth } = require('../modules/tokenControl');
 const express = require('express');
+const auth = require('./auth');
 const router = express.Router();
 
-router.get('/register', auth, (req, res) => {
-    if (req.isAuthenticated) res.redirect('/login')
-    else res.render('Register');
-});
+router.get('/register', auth(
+    (req, res) => res.redirect('/login'),    // 성공 시
+    (req, res) => res.render('Register')     // 실패 시
+));
 router.get('/register/checkduplicate', checkDuplicate);
 router.post('/register/createaccount', createAccount);
 

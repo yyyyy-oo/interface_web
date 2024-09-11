@@ -17,7 +17,7 @@ const mySQL = async (sql, params) => {
     const [result] = await pool.execute(sql, params);
     return result;
   } catch (error) {
-    console.error('MySQL Query Error:', error.message);
+    console.error('MySQL Query Error');
     throw error;
   }
 };

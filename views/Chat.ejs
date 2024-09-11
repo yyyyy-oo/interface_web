@@ -18,15 +18,22 @@
         const selectedRoom = document.getElementById('chatroom');
         const inputMessage = document.getElementById('message');
         const chatLog = document.getElementById("chatlog");
-        let lastUserId = null;
+        let currentRoom = selectedRoom.value; // 초기 방 설정
 
         // Socket.IO 클라이언트 연결
         const socket = io();
 
-        // 선택창
+        // 초기 방 참여
+        socket.emit('joinRoom', currentRoom);
+
+        // 선택창 변경 시 방 참여
         selectedRoom.addEventListener('change', function (event) {
             const roomValue = event.target.value;
-            loadchat(roomValue);
+            socket.emit('leaveRoom', currentRoom); // 현재 방 떠나기
+            currentRoom = roomValue;
+            socket.emit('joinRoom', currentRoom); // 새로운 방 참여
+            chatLog.innerHTML = ''; // 방 변경 시 채팅 로그 초기화
+            loadchat(currentRoom);
         });
 
         // 엔터키
@@ -40,7 +47,8 @@
         // 메세지 전송
         function sendMessage() {
             const message = inputMessage.value.trim();
-            const jsonMessage = { "message": message };
+            if (message === '') return; // 메시지가 비어있으면 전송하지 않음
+            const jsonMessage = { "room": currentRoom, "message": message }; // 방 정보 추가
             socket.emit('message', JSON.stringify(jsonMessage));
             inputMessage.value = '';
         }
@@ -60,9 +68,6 @@
             var newMessage = document.createElement('div');
             newMessage.textContent = `[${data.id}] ${data.message}`;
             chatLog.appendChild(newMessage);
-
-            // input 필드를 비웁니다
-            document.getElementById('userInput').value = '';
         }
     </script>
 

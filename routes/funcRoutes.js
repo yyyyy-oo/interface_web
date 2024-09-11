@@ -1,15 +1,15 @@
 const { saveTodoList, loadTodoList } = require('../controllers/todoController');
-const { auth } = require('../modules/tokenControl');
 const express = require('express');
+const auth = require('./auth');
 const router = express.Router();
 
 router.get('/todolist', (req, res) => res.render('TodoList'));
 router.post('/todolist/save', saveTodoList);
 router.get('/todolist/load/:code', loadTodoList);
 
-router.get('/chat', auth, (req, res) => {
-    if (req.isAuthenticated) res.render('chat')
-    else res.redirect('/Login');
-});
+router.get('/chat', auth(
+    (req, res) => res.render('chat'), // 성공 시
+    (req, res) => res.render('login') // 실패 시
+));
 
 module.exports = router;
