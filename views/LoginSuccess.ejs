@@ -6,8 +6,6 @@
     <button id="logoutButton" type="button" onclick="logout()">로그아웃</button>
 
     <script>
-        const baseUrl = window.location.origin;
-
         function refresh(){
             fetch(`${baseUrl}/tokenRefresh`)
                 .then(response => {

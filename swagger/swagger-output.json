@@ -68,8 +68,86 @@
           "201": {
             "description": "작성됨"
           },
-          "409": {
-            "description": "충돌"
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/todolist": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/todolist/save": {
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "작성됨"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/todolist/load/{code}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공"
+          },
+          "404": {
+            "description": "찾을 수 없음"
+          },
+          "500": {
+            "description": "내부 서버 오류"
+          }
+        }
+      }
+    },
+    "/chat": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/chat/load/{roomcode}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "roomcode",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공"
+          },
+          "404": {
+            "description": "찾을 수 없음"
           },
           "500": {
             "description": "내부 서버 오류"
@@ -130,62 +208,21 @@
           "200": {
             "description": "성공"
           },
-          "400": {
-            "description": "잘못된 요청"
-          },
           "500": {
             "description": "내부 서버 오류"
           }
         }
       }
     },
-    "/chat": {
+    "/tokenRefresh": {
       "get": {
         "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/todolist": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/todolist/save": {
-      "post": {
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "작성됨"
-          },
-          "500": {
-            "description": "내부 서버 오류"
-          }
-        }
-      }
-    },
-    "/todolist/load/{code}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "code",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
         "responses": {
           "200": {
             "description": "성공"
+          },
+          "401": {
+            "description": "권한 없음"
           },
           "404": {
             "description": "찾을 수 없음"

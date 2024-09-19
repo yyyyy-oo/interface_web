@@ -1,6 +1,7 @@
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
 const token = require('../modules/token');
+
 const { mySQL } = require('../modules/connectDB');
 
 const setupSocketIo = (server) => {
@@ -13,7 +14,7 @@ const setupSocketIo = (server) => {
     io.on('connection', (socket) => {
         try {
             const cookies = socket.request.cookies;
-            const userid = token.decodeAccess(cookies.token).id;
+            const userid = token.decode(cookies.token).id;
             if (!userid) throw new Error('Wrong Token');
 
             console.log('Chat In:', userid);

@@ -10,6 +10,10 @@
             </li>
             <li>비밀번호 : <input name="userpw" type="password" placeholder="PASSWORD" required></li>
             <li>비밀번호 확인 : <input name="userpwconfirm" type="password" placeholder="PASSWORD CONFIRM" required></li>
+            <li>이름 : <input name="username" type="text" placeholder="NAME" required></li>
+            <li>생일 : <input name="birthdate" type="date" required></li>
+            <li>전화번호 : <input name="phone" type="tel" placeholder="PHONE" required></li>
+            <li>이메일 : <input name="email" type="email" placeholder="EMAIL" required></li>
         </ul>
         <button id="signupButton" type="submit" disabled>가입</button>
     </form>
@@ -18,7 +22,6 @@
         let isIdValid = false;
         const checkButton = document.getElementById('checkButton');
         const signupButton = document.getElementById('signupButton');
-        const baseUrl = window.location.origin;
 
         function handleIdChange() {
             isIdValid = false;
@@ -50,21 +53,32 @@
         function register(event) {
             event.preventDefault();
             const formData = new FormData(document.getElementById('signupForm'));
-            const userid = formData.get('userid').trim();
-            const userpw = formData.get('userpw').trim();
-            const userpwconfirm = formData.get('userpwconfirm').trim();
+            const id = formData.get('userid').trim();
+            const pw = formData.get('userpw').trim();
+            const pwconfirm = formData.get('userpwconfirm').trim();
+            const username = formData.get('username').trim();
+            const birthdate = formData.get('birthdate').trim();
+            const phone = formData.get('phone').trim();
+            const email = formData.get('email').trim();
 
-            if (userpw !== userpwconfirm) {
+            if (pw !== pwconfirm) {
                 alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
                 return false;
             }
 
-            const idpw = { inputid: userid, inputpw: userpw };
+            const userdata = {
+                id: id,
+                pw: pw,
+                username: username,
+                birthdate: birthdate,
+                phone: phone,
+                email: email
+            };
 
             fetch(`${baseUrl}/register/createaccount`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(idpw)
+                body: JSON.stringify(userdata)
             })
                 .then(response => {
                     if (response.ok) { response.json() }

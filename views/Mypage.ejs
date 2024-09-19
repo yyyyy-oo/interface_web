@@ -1,0 +1,81 @@
+<%- include('header.ejs') %>
+    <!-- 여기서부터 -->
+
+    <h2>마이페이지</h2>
+
+    <div id="userInfo">
+        <p>이름: <input type="text" id="username" disabled> <button id="editUsername">수정</button></p>
+        <p>생일: <input type="text" id="birthdate" disabled> <button id="editBirthdate">수정</button></p>
+        <p>전화번호: <input type="text" id="phone" disabled> <button id="editPhone">수정</button></p>
+        <p>이메일: <input type="text" id="email" disabled> <button id="editEmail">수정</button></p>
+        <p>가입일: <span id="regDate"></span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch(`${baseUrl}/mypage/load`)
+                .then(response => {
+                    if (response.ok) { return response.json(); }
+                    else { throw new Error("사용자 정보를 불러오는 중 문제가 발생했습니다."); }
+                })
+                .then(data => {
+                    document.getElementById('username').value = data.username;
+                    document.getElementById('birthdate').value = data.birthdate;
+                    document.getElementById('phone').value = data.phone;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('regDate').textContent = data.regDate.split(' ')[0]; // 수정된 부분
+                })
+                .catch(error => { alert(error.message); });
+
+            function toggleEdit(buttonId, inputId) {
+                const button = document.getElementById(buttonId);
+                const input = document.getElementById(inputId);
+
+                function toggle() {
+                    if (input.disabled) {
+                        input.disabled = false;
+                        button.textContent = '완료';
+                    } else {
+                        input.disabled = true;
+                        button.textContent = '수정';
+
+                        const userInfo = {
+                            username: document.getElementById('username').value,
+                            birthdate: document.getElementById('birthdate').value,
+                            phone: document.getElementById('phone').value,
+                            email: document.getElementById('email').value
+                        };
+
+                        fetch(`${baseUrl}/mypage/update`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(userInfo)
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("사용자 정보를 저장하는 중 문제가 발생했습니다.");
+                                }
+                            })
+                            .catch(error => { alert(error.message); });
+                    }
+                }
+
+                button.addEventListener('click', toggle);
+                input.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        toggle();
+                    }
+                });
+            }
+
+            toggleEdit('editUsername', 'username');
+            toggleEdit('editBirthdate', 'birthdate');
+            toggleEdit('editPhone', 'phone');
+            toggleEdit('editEmail', 'email');
+        });
+    </script>
+
+    <!-- 여기까지 -->
+    <%- include('footer.ejs') %>

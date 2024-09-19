@@ -9,8 +9,6 @@
 
 <body>
     <header>
-        <!-- 여기서부터 -->
-
         <h1>홈페이지</h1>
         <nav>
             <a href="/">메인페이지</a>
@@ -18,10 +16,42 @@
             <a href="/todolist">Todo리스트</a>
             <a href="/register">회원가입</a>
             <a href="/login">로그인</a>
-            <a href="/chat">채팅(개발중)</a>
+            <a href="/mypage">마이페이지</a>
+            <a href="/chat">채팅</a>
         </nav>
         <br>
+        <div id="token-time">[ 토큰X ]</div>
         <hr>
+        <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+        <script>
+            const baseUrl = window.location.origin;
+            window.onload = function () {
+                fetch(`${baseUrl}/tokenRefresh`).then(response => response.json())
+                    .then(data => {
+                        const token = data.token;
+                        const decoded = jwt_decode(token);
+                        const expirationTime = decoded.exp * 1000;
+                        const tokenDisplay = document.getElementById('token-time');
 
-        <!-- 여기까지 -->
+                        function updateTokenTime() {
+                            const currentTime = Date.now();
+                            const remainingTime = expirationTime - currentTime;
+                            if (remainingTime > 0) {
+                                const minutes = Math.floor(remainingTime / 60000);
+                                const seconds = Math.floor((remainingTime % 60000) / 1000);
+                                tokenDisplay.textContent = `[ ${minutes}:${seconds} ]`;
+                            } else {
+                                tokenDisplay.textContent = '토큰이 만료되었습니다.';
+                            }
+                        }
+
+                        setInterval(updateTokenTime, 1000);
+                        updateTokenTime(); // 초기 호출
+                    });
+            }
+        </script>
+        <!-- 여기 -->
     </header>
+</body>
+
+</html>

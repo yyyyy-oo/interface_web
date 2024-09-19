@@ -35,7 +35,7 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // 라우트 설정
 fs.readdirSync(path.join(__dirname, 'routes'))
-  .filter(file => file.endsWith('.js') && file !== 'auth.js')
+  .filter(file => file.endsWith('.js') && file !== 'authMiddleware.js')
   .forEach(file => app.use('/', require(`./routes/${file}`)));
 
 // 경로 설정

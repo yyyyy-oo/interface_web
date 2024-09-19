@@ -1,5 +1,5 @@
 const { mySQL } = require('../modules/connectDB');
-const { verifyHash } = require('../modules/hashPassword');
+const { verifyPassword } = require('../modules/hashing');
 const token = require('../modules/token');
 
 // 로그인
@@ -15,7 +15,7 @@ const loginUser = async (req, res) => {
     }
 
     // 비밀번호가 일치하지 않을 경우
-    const rehashedPassword = verifyHash(dbResult.salt, inputpw);
+    const rehashedPassword = verifyPassword(dbResult.salt, inputpw);
     if (rehashedPassword !== dbResult.pw) {
       console.warn('Wrong Password:', dbResult.id);
       return res.status(401).json({ message: 'Wrong Password' });
@@ -38,7 +38,7 @@ const loginUser = async (req, res) => {
 // 로그아웃
 const logoutUser = async (req, res) => {
   try {
-    const id = token.decodeAccess(req.cookies.token).id;
+    const id = token.decode(req.cookies.token).id;
     await mySQL('DELETE FROM token WHERE id = ?', [id]);
     res.cookie('token', '', { maxAge: 0, path: '/' });
     console.log('Logout Success:', id)
@@ -53,23 +53,27 @@ const logoutUser = async (req, res) => {
 const refreshAccessToken = async (req, res) => {
   try {
     const accessToken = req.cookies.token;
-    const decodeAccess = token.decodeAccess(accessToken);
-    const [dbResult] = await mySQL('SELECT refreshtoken FROM token WHERE id = ?', [decodeAccess.id]);
+    if (!accessToken) {
+      console.warn('AccessToken Does Not Exist');
+      return res.status(401).json({ message: 'AccessToken Does Not Exist' });
+    }
 
+    const id = token.decode(accessToken).id;
+    const [dbResult] = await mySQL('SELECT refreshtoken FROM token WHERE id = ?', [id]);
     if (!dbResult) {
-      console.warn('RefreshToken Does Not Exist:', decodeAccess.id);
+      console.warn('RefreshToken Does Not Exist:', id);
       return res.status(404).json({ message: 'RefreshToken Does Not Exist' });
     }
 
     const refreshToken = dbResult.refreshtoken;
 
     if (token.compare(accessToken, refreshToken)) {
-      const newAccessToken = token.generateAccess(decodeAccess.id);
+      const newAccessToken = token.generateAccess(id);
       res.cookie('token', newAccessToken, { httpOnly: true, secure: false, path: '/' });
-      console.log('AccessToken Refreshed:', decodeAccess.id);
-      return res.status(200).json({ message: 'AccessToken Refreshed' });
+      console.log('AccessToken Refreshed:', id);
+      return res.status(200).json({ token: newAccessToken, message: 'AccessToken Refreshed' });
     } else {
-      console.warn('Token Does Not Match:', decodeAccess.id);
+      console.warn('Token Does Not Match:', id);
       return res.status(401).json({ message: 'Token Does Not Match' });
     }
   } catch (error) {
